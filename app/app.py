@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import markdown
 from fastapi.responses import  HTMLResponse
+import language_tool_python
 
 from utils import save_file, read_note, get_all_notes
 
@@ -19,8 +20,18 @@ class Note(BaseModel):
 
 @app.post("/check-grammar")
 def check_grammar(note: Note):
-    ...
-
+    tool = language_tool_python.LanguageTool("en-US")
+    matches = tool.check(note.note)
+    return_value = {}
+    for match in matches:
+        return_value[match.offset] = {
+            "message": match.message,
+            "replacements": match.replacements
+        }
+    return return_value
+    
+    
+    
 @app.post("/upload-file")
 async def upload_file(file: UploadFile = File(...)):
     data = await file.read()

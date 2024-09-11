@@ -32,3 +32,4 @@ def read_note(file_name):
 def get_all_notes():
     notes = [note for note in os.listdir(BASE_PATH)]
     return notes
+
